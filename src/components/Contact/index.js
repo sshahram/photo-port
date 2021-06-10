@@ -1,12 +1,33 @@
-import React, {useState} from 'react';
+import React, { useState } from 'react';
+import { validateEmail } from '../../utils/helpers';
 
 function ContactForm() {
-    const [formState, setFormState] = useState({name: '', email: '', message: ''});
+    const [formState, setFormState] = useState({ name: '', email: '', message: '' });
     const { name, email, message } = formState;
+    const [errorMessage, setErrorMessage] = useState('');
 
     // this function will sync the internal state of the component formState with the use input from the DOM
     function handleChange(e) {
-        setFormState({...formState, [e.target.name]: e.target.value})
+        if (e.target.name === 'email') {
+            const isValid = validateEmail(e.target.value);
+            console.log(isValid);
+            // isValid conditional statement
+            if (!isValid) {
+                setErrorMessage('Your email is invalid.');
+            } else {
+                setErrorMessage('');
+            }
+        } else {
+            if (!e.target.value.length) {
+                setErrorMessage(`${e.target.name} is required.`);
+            } else {
+                setErrorMessage('');
+            }
+        }
+        // console.log('errorMessage', errorMessage);
+        if (!errorMessage) {
+            setFormState({ ...formState, [e.target.name]: e.target.value });
+        }
     }
 
     // console.log(formState);
@@ -15,7 +36,7 @@ function ContactForm() {
         e.preventDefault();
         console.log(formState);
     }
-    return(
+    return (
         <section>
             <h1>Contact me</h1>
             <form id="contact-form" onSubmit={handleSubmit}>
